@@ -58,3 +58,9 @@ Yeni mimari karar, mevcut ADR'ye gerekçesiz ters düşemez. Değişiklik gereki
 **Karar:** Yedek alımı için DB bağlantısı `withDbClosed` köprüsüyle düzgün kapatılır, dosya kopyalanır, bağlantı migration + seed kontrollü olarak yeniden açılır.
 **Gerekçe:** expo-sqlite SDK 58'de SQLite online backup API'si sunmuyor; kit yalnızca ana dosyayı WAL açıkken kopyalamayı kabul etmiyor. Tek kullanıcılı üründe kısa kapanma penceresi kabul edilebilir.
 **Sonuç:** Snapshot her zaman WAL-checkpoint'lenmiş tutarlı durumdadır; restore eski şemalı DB getirirse açılışta migration uygulanır.
+
+## ADR-011: Arama stratejisi — LIKE fallback
+
+**Karar:** Günlük metin araması bu sürümde indeksli LIKE sorgusuyla yapılır; FTS5 kullanılmaz.
+**Gerekçe:** expo-sqlite'ın cihazlarda kullandığı SQLite derlemesinde FTS5 kullanılabilirliği garanti değildir; kit "destek sorunu olursa indeksli LIKE arama fallback"e izin verir.
+**Sonuç:** ASCII'de case-insensitive; Türkçe İ/ı gibi byte-düzeyi farklılıklar yazıldığı gibi aranarak aşılır. FTS5 + unicode61, cihaz doğrulamasından sonra değerlendirilebilir.

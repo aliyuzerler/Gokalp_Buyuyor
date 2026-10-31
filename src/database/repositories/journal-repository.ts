@@ -22,6 +22,14 @@ export type JournalEntryRow = z.infer<typeof journalEntryRowSchema>;
 export type JournalListFilters = {
   entryType?: JournalEntryType | null;
   favoritesOnly?: boolean;
+  /** Serbest metin arama (başlık + gövde, LIKE). */
+  search?: string;
+  /** Tarih aralığı (occurred_at, YYYY-MM-DD kapsayıcı). */
+  dateFrom?: string | null;
+  dateTo?: string | null;
+  areaId?: string | null;
+  /** Etiket adı (tam eşleşme, etiket birleşimi). */
+  tag?: string | null;
   limit?: number;
   offset?: number;
 };
@@ -52,6 +60,29 @@ export class JournalRepository {
     }
     if (filters.favoritesOnly) {
       where.push('j.is_favorite = 1');
+    }
+    if (filters.search && filters.search.trim().length > 0) {
+      where.push('(j.title LIKE ? OR j.body LIKE ?)');
+      const like = `%${filters.search.trim()}%`;
+      params.push(like, like);
+    }
+    if (filters.dateFrom) {
+      where.push('j.occurred_at >= ?');
+      params.push(filters.dateFrom);
+    }
+    if (filters.dateTo) {
+      where.push('j.occurred_at <= ?');
+      params.push(filters.dateTo);
+    }
+    if (filters.areaId) {
+      where.push('j.area_id = ?');
+      params.push(filters.areaId);
+    }
+    if (filters.tag) {
+      where.push(
+        'EXISTS (SELECT 1 FROM journal_entry_tags jt JOIN tags t ON t.id = jt.tag_id WHERE jt.journal_entry_id = j.id AND t.name = ?)',
+      );
+      params.push(filters.tag);
     }
     const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
 

@@ -8,6 +8,7 @@ import { EmptyState } from '@/components/empty-state';
 import { ScreenHeader } from '@/components/screen-header';
 import { SectionHeader } from '@/components/section-header';
 import { useTimeline } from '@/features/timeline/use-timeline';
+import { useArchiveStats } from '@/features/timeline/use-archive-stats';
 import { tr } from '@/i18n/tr';
 import { colors, spacing, typography } from '@/theme/tokens';
 
@@ -16,6 +17,7 @@ import { colors, spacing, typography } from '@/theme/tokens';
  */
 export default function ArchiveScreen() {
   const { items, loading, hasMore, load } = useTimeline();
+  const stats = useArchiveStats();
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
@@ -33,6 +35,30 @@ export default function ArchiveScreen() {
           <View style={styles.rowText}>
             <Text style={styles.rowTitle}>{tr.archive.settingsOpenProfile}</Text>
             <Text style={styles.rowDesc}>{tr.archive.settingsOpenProfileDesc}</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
+        </Pressable>
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => router.push('/interests')}
+          style={styles.row}
+          testID="archive-open-interests"
+        >
+          <View style={styles.rowText}>
+            <Text style={styles.rowTitle}>İlgi alanları</Text>
+            <Text style={styles.rowDesc}>Gökalp’in merak ettikleri</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
+        </Pressable>
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => router.push('/settings/reminders')}
+          style={styles.row}
+          testID="archive-open-reminders"
+        >
+          <View style={styles.rowText}>
+            <Text style={styles.rowTitle}>Hatırlatmalar</Text>
+            <Text style={styles.rowDesc}>Yerel bildirimler</Text>
           </View>
           <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
         </Pressable>
@@ -60,6 +86,17 @@ export default function ArchiveScreen() {
           </View>
           <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
         </Pressable>
+      </Card>
+
+      <SectionHeader title="Arşiv özeti" subtitle="Yalnızca betimleyici bilgi — gelişim skoru yok" />
+      <Card testID="archive-stats">
+        <Text style={styles.rowDesc}>
+          {stats.journalCount} günlük kaydı · {stats.mediaCount} medya · {stats.interestCount} ilgi alanı
+        </Text>
+        <Text style={styles.rowDesc}>
+          {stats.firstRecord ? `İlk kayıt: ${stats.firstRecord}` : 'Henüz kayıt yok'}
+          {stats.lastRecord ? ` · Son kayıt: ${stats.lastRecord}` : ''}
+        </Text>
       </Card>
 
       <SectionHeader title={tr.archive.timelineSection} />

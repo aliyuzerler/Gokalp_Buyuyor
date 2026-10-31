@@ -13,9 +13,12 @@ import { router, Stack } from 'expo-router';
 import { Button } from '@/components/button';
 import { Card } from '@/components/card';
 import { ChipRow } from '@/components/chip-row';
+import { DateField } from '@/components/date-field';
 import { EmptyState } from '@/components/empty-state';
+import { Input } from '@/components/input';
 import { ScreenHeader } from '@/components/screen-header';
 import { useJournal } from '@/features/journal/use-journal';
+import { useDevelopmentAreas2 } from '@/features/development/use-development';
 import {
   JOURNAL_ENTRY_TYPES,
   JOURNAL_ENTRY_TYPE_LABELS,
@@ -35,7 +38,20 @@ const FILTERS: { key: Filter; label: string }[] = [
 export default function JournalScreen() {
   const [entryType, setEntryType] = useState<JournalEntryType | null>(null);
   const [favoritesOnly, setFavoritesOnly] = useState(false);
-  const { entries, loading, hasMore, load } = useJournal({ entryType, favoritesOnly });
+  const [search, setSearch] = useState('');
+  const [areaId, setAreaId] = useState<string | null>(null);
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
+  const [showDates, setShowDates] = useState(false);
+  const { areas } = useDevelopmentAreas2();
+  const { entries, loading, hasMore, load } = useJournal({
+    entryType,
+    favoritesOnly,
+    search,
+    areaId,
+    dateFrom: dateFrom.length === 10 ? dateFrom : null,
+    dateTo: dateTo.length === 10 ? dateTo : null,
+  });
   const selected: Filter = favoritesOnly ? 'favorites' : (entryType ?? 'all');
 
   return (
@@ -44,6 +60,13 @@ export default function JournalScreen() {
       <ScreenHeader title={tr.journal.title} />
 
       <View style={styles.filters}>
+        <Input
+          value={search}
+          onChangeText={setSearch}
+          placeholder="Kayıtlarda ara…"
+          autoCapitalize="none"
+          testID="journal-search"
+        />
         <ChipRow<Filter>
           items={FILTERS}
           selectedKey={selected}
@@ -52,6 +75,30 @@ export default function JournalScreen() {
             setEntryType(key === 'all' || key === 'favorites' ? null : (key as JournalEntryType));
           }}
         />
+        <ChipRow
+          items={[
+            { key: '__all__', label: 'Tüm alanlar' },
+            ...areas.map((a) => ({ key: a.id, label: a.title })),
+          ]}
+          selectedKey={areaId ?? '__all__'}
+          onSelect={(key) => setAreaId(key === '__all__' ? null : key)}
+        />
+        <Button
+          label={showDates ? 'Tarihi gizle' : 'Tarih aralığı'}
+          variant="ghost"
+          onPress={() => setShowDates(!showDates)}
+          testID="journal-toggle-dates"
+        />
+        {showDates ? (
+          <View style={styles.dateRow}>
+            <View style={styles.dateCol}>
+              <DateField value={dateFrom} onChange={setDateFrom} placeholder="Başlangıç" testID="journal-date-from" />
+            </View>
+            <View style={styles.dateCol}>
+              <DateField value={dateTo} onChange={setDateTo} placeholder="Bitiş" testID="journal-date-to" />
+            </View>
+          </View>
+        ) : null}
       </View>
 
       <FlatList
@@ -123,6 +170,13 @@ const styles = StyleSheet.create({
   },
   filters: {
     paddingHorizontal: spacing.md,
+  },
+  dateRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  dateCol: {
+    flex: 1,
   },
   list: {
     padding: spacing.md,

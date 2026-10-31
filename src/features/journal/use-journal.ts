@@ -16,6 +16,11 @@ const PAGE_SIZE = 20;
 export function useJournal(options: {
   entryType?: JournalEntryType | null;
   favoritesOnly?: boolean;
+  search?: string;
+  dateFrom?: string | null;
+  dateTo?: string | null;
+  areaId?: string | null;
+  tag?: string | null;
 } = {}) {
   const db = useReadyDb();
   const repository = useMemo(() => new JournalRepository(db), [db]);
@@ -29,6 +34,11 @@ export function useJournal(options: {
         const page = await repository.list({
           entryType: options.entryType ?? null,
           favoritesOnly: options.favoritesOnly,
+          search: options.search,
+          dateFrom: options.dateFrom ?? null,
+          dateTo: options.dateTo ?? null,
+          areaId: options.areaId ?? null,
+          tag: options.tag ?? null,
           limit: PAGE_SIZE,
           offset,
         });
@@ -38,7 +48,7 @@ export function useJournal(options: {
         setLoading(false);
       }
     },
-    [repository, options.entryType, options.favoritesOnly],
+    [repository, options.entryType, options.favoritesOnly, options.search, options.dateFrom, options.dateTo, options.areaId, options.tag],
   );
 
   useEffect(() => {
