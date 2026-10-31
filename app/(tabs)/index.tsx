@@ -6,18 +6,32 @@ import { Card } from '@/components/card';
 import { EmptyState } from '@/components/empty-state';
 import { SectionHeader } from '@/components/section-header';
 import { ScreenContainer } from '@/components/screen-container';
-import { getTempProfile } from '@/features/profile/temp-profile-store';
+import { useProfile } from '@/features/profile/use-profile';
 import { tr } from '@/i18n/tr';
 import { colors, spacing, typography } from '@/theme/tokens';
 
 export default function HomeScreen() {
-  const profile = getTempProfile();
+  const { profile, loading, ageLabel } = useProfile();
+
+  if (loading) {
+    return (
+      <ScreenContainer>
+        <Text style={styles.subtitle}>{tr.common.loading}</Text>
+      </ScreenContainer>
+    );
+  }
 
   return (
     <ScreenContainer>
-      <View style={styles.greetingBlock}>
-        <Text style={styles.title}>{profile ? profile.displayName : tr.appName}</Text>
-        <Text style={styles.subtitle}>{tr.home.greeting}</Text>
+      <View style={styles.greetingBlock} testID="home-greeting">
+        <Text style={styles.title}>{profile ? profile.display_name : tr.appName}</Text>
+        {profile && ageLabel ? (
+          <Text style={styles.subtitle}>
+            {tr.home.agePrefix} {ageLabel}
+          </Text>
+        ) : (
+          <Text style={styles.subtitle}>{tr.home.greeting}</Text>
+        )}
       </View>
 
       {!profile && (

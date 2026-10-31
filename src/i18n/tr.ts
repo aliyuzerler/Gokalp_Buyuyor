@@ -22,8 +22,11 @@ export const tr = {
     tryAgain: 'Tekrar dene',
     loading: 'Yükleniyor…',
     errorGeneric: 'Bir sorun oldu. Lütfen tekrar deneyin.',
+    dbLoadingTitle: 'Arşiv hazırlanıyor',
+    dbErrorTitle: 'Veritabanı açılamadı',
   },
   home: {
+    agePrefix: 'bugün',
     placeholder: 'Ana sayfa hazırlanıyor.',
     placeholderHint:
       'Bu ekranda hızlı not, anı, fotoğraf ekleme ve son kayıtlar yer alacak.',
@@ -62,6 +65,20 @@ export const tr = {
   },
   archive: {
     placeholder: 'Zaman çizelgesi, ilgi alanları, yedekleme ve ayarlar burada olacak.',
+    settingsSection: 'Profil ve Ayarlar',
+    settingsOpenProfile: 'Çocuk profili',
+    settingsOpenProfileDesc: 'Ad, doğum tarihi ve profil fotoğrafı',
+  },
+  settings: {
+    profileTitle: 'Çocuk profili',
+    profileNameLabel: 'Ad',
+    profileNameHint: 'Uygulamada bu adla selamlanır.',
+    profileBirthLabel: 'Doğum tarihi',
+    profileBirthHint: 'Biçim: YYYY-MM-DD (örn. 2026-01-18)',
+    profilePhotoLabel: 'Profil fotoğrafı',
+    profilePhotoLater: 'Fotoğraf ekleme Faz 7\'de (medya arşivi) gelecek.',
+    profileSaved: 'Profil kaydedildi.',
+    profileMissing: 'Henüz profil oluşturulmadı.',
   },
 } as const;
 

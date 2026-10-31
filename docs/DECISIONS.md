@@ -34,3 +34,15 @@
 ## Değişiklik kuralı
 
 Yeni mimari karar, mevcut ADR'ye gerekçesiz ters düşemez. Değişiklik gerekiyorsa yeni ADR ekle; eski kararı silme.
+
+## ADR-007: Rehber kategorisi seed verisi
+
+**Karar:** Kit templates'inde rehber kategorisi JSON'u bulunmadığı için 5 nötr kategori (`src/database/seeds/guide-categories.json`) uygulama içinde tanımlandı: Oyun ve Keşif, Dil ve Sohbet, Duyusal Oyunlar, Günlük Rutinler, Yaratıcı Etkinlikler.
+**Gerekçe:** Faz 2 seed gereksinimi; kategoriler organizasyonel taksonomidir, klinik iddia içermez.
+**Sonuç:** İçerik sürümü `SEED_VERSIONS.guideCategories` ile yönetilir; klinik içerik yalnızca kaynaklı şekilde Faz 6'da eklenir.
+
+## ADR-008: DB sürücü soyutlaması ve test stratejisi
+
+**Karar:** Repository'ler `DatabaseDriver` arayüzüne bağımlıdır; uygulama `ExpoDatabaseDriver` (expo-sqlite), testler `NodeSqliteDriver` (node:sqlite) kullanır.
+**Gerekçe:** expo-sqlite Node ortamında çalışmaz; aynı SQL/migration'ın gerçek SQLite üzerinde entegrasyon testi gerekliliği (TEST_STRATEGY.md).
+**Sonuç:** Migration ve CRUD testleri production SQL'iyle birebir koşar. Sürücü farkları (parametre bağlama, transaction) iki adaptörde ortak davranışa sabitlenmiştir.

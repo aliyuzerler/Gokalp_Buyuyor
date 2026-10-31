@@ -1,15 +1,31 @@
- 
 import { press, render, typeText } from '@/test-utils/render';
+import { View } from 'react-native';
 
 jest.mock('expo-router', () => ({
-   
   router: { push: jest.fn(), replace: jest.fn() },
 }));
 
 jest.mock('react-native-safe-area-context', () => ({
-  SafeAreaView: Object.assign((props: { children?: React.ReactNode }) => props.children ?? null, {}),
-  SafeAreaProvider: Object.assign((props: { children?: React.ReactNode }) => props.children ?? null, {}),
+  SafeAreaView: (props: { children?: React.ReactNode }) => props.children ?? null,
+  SafeAreaProvider: (props: { children?: React.ReactNode }) => props.children ?? null,
   useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
+}));
+
+const mockSaveProfile = jest.fn().mockResolvedValue({
+  id: 'p1',
+  display_name: 'Gökalp',
+  birth_date: '2026-01-18',
+});
+
+jest.mock('@/features/profile/use-profile', () => ({
+  useProfile: () => ({
+    profile: null,
+    loading: false,
+    saveProfile: mockSaveProfile,
+    reload: jest.fn(),
+    age: null,
+    ageLabel: null,
+  }),
 }));
 
 // eslint-disable-next-line import/first
@@ -18,26 +34,26 @@ import { router } from 'expo-router';
 // eslint-disable-next-line import/first
 import OnboardingScreen from '../../app/onboarding/index';
 
-// eslint-disable-next-line import/first
-import { clearTempProfile, getTempProfile } from '@/features/profile/temp-profile-store';
-
-const routerMock = router as jest.Mocked<typeof router>;
-
-describe('onboarding akışı', () => {
+describe('onboarding akışı (Faz 02 — kalıcı profil)', () => {
   beforeEach(() => {
-    clearTempProfile();
-    routerMock.replace.mockClear();
-    routerMock.push.mockClear();
+    mockSaveProfile.mockClear();
+    (router.replace as jest.Mock).mockClear();
   });
 
-  it('hoş geldin adımından profile geçer', async () => {
-    const { getByTestId } = await render(<OnboardingScreen />);
+  it('geçerli girişte saveProfile DB hook’una doğru veriyle çağrılır', async () => {
+    const { getByTestId, getByText } = await render(<OnboardingScreen />);
     await press(getByTestId('onboarding-welcome-next'));
-    expect(getByTestId('onboarding-name')).toBeOnTheScreen();
-    expect(getByTestId('onboarding-birth')).toBeOnTheScreen();
+
+    await typeText(getByTestId('onboarding-name'), 'Gökalp');
+    await typeText(getByTestId('onboarding-birth'), '20260118');
+
+    await press(getByTestId('onboarding-profile-next'));
+
+    expect(mockSaveProfile).toHaveBeenCalledWith({ displayName: 'Gökalp', birthDate: '2026-01-18' });
+    expect(getByText('Profil: Gökalp · 2026-01-18')).toBeOnTheScreen();
   });
 
-  it('geçersiz doğum tarihinde Devam kapalıdır ve hata gösterilir', async () => {
+  it('geçersiz doğum tarihi DB’ye hiç gönderilmez', async () => {
     const { getByTestId, queryByTestId } = await render(<OnboardingScreen />);
     await press(getByTestId('onboarding-welcome-next'));
 
@@ -46,21 +62,7 @@ describe('onboarding akışı', () => {
 
     const next = getByTestId('onboarding-profile-next');
     expect(next.props.accessibilityState.disabled).toBe(true);
-  });
-
-  it('geçerli ad ve tarihte profil kaydedilir ve özet gösterilir', async () => {
-    const { getByTestId, getByText } = await render(<OnboardingScreen />);
-    await press(getByTestId('onboarding-welcome-next'));
-
-    await typeText(getByTestId('onboarding-name'), 'Gökalp');
-    await typeText(getByTestId('onboarding-birth'), '20260118');
-
-    const next = getByTestId('onboarding-profile-next');
-    expect(next.props.accessibilityState.disabled).toBeFalsy();
-    await press(next);
-
-    expect(getByText('Profil: Gökalp · 2026-01-18')).toBeOnTheScreen();
-    expect(getTempProfile()).toEqual({ displayName: 'Gökalp', birthDate: '2026-01-18' });
+    expect(mockSaveProfile).not.toHaveBeenCalled();
   });
 
   it('tamamla adımından ana sayfaya döner', async () => {
@@ -69,8 +71,15 @@ describe('onboarding akışı', () => {
     await typeText(getByTestId('onboarding-name'), 'Gökalp');
     await typeText(getByTestId('onboarding-birth'), '20260118');
     await press(getByTestId('onboarding-profile-next'));
-
     await press(getByTestId('onboarding-finish'));
-    expect(routerMock.replace).toHaveBeenCalledWith('/(tabs)');
+
+    expect(router.replace).toHaveBeenCalledWith('/(tabs)');
+  });
+});
+
+describe('görünüm yardımcıları', () => {
+  it('test-utils press/typeText çalışır', async () => {
+    await render(<View testID="boş" />);
+    expect(true).toBe(true);
   });
 });

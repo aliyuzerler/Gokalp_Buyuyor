@@ -1,0 +1,7 @@
+[
+  {"slug":"play-exploration","title":"Oyun ve Keşif","description":"Serbest oyun, keşif ve birlikte dikkat odaklı etkinlikler.","sort_order":1},
+  {"slug":"language-talk","title":"Dil ve Sohbet","description":"Şarkılar, masallar, ses oyunları ve günlük sohbet ritüelleri.","sort_order":2},
+  {"slug":"sensory-play","title":"Duyusal Oyunlar","description":"Dokunma, ses, görme ve hareket deneyimi sunan sakin etkinlikler.","sort_order":3},
+  {"slug":"daily-routines","title":"Günlük Rutinler","description":"Yemek, uyku ve bakım rutinlerine katılım fırsatları.","sort_order":4},
+  {"slug":"creative-arts","title":"Yaratıcı Etkinlikler","description":"Müzik, ritim, boyama ve hayal gücü temelli uğraşlar.","sort_order":5}
+]

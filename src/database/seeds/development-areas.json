@@ -1,0 +1,12 @@
+[
+  {"slug":"motor","title":"Motor Beceriler","description":"Hareket, denge, uzanma, kavrama ve koordinasyon gözlemleri.","sort_order":1},
+  {"slug":"language-communication","title":"Dil ve İletişim","description":"Sesler, jestler, kelimeler, dinleme ve karşılıklı iletişim.","sort_order":2},
+  {"slug":"cognitive-exploration","title":"Bilişsel Gelişim ve Keşif","description":"Merak, dikkat, nesneleri keşfetme ve problem çözme.","sort_order":3},
+  {"slug":"social-emotional","title":"Sosyal-Duygusal Gelişim","description":"Etkileşim, duygular, bağ kurma ve sosyal deneyimler.","sort_order":4},
+  {"slug":"sensory","title":"Duyusal Keşif","description":"Görme, işitme, dokunma ve çevreyi duyularla keşfetme.","sort_order":5},
+  {"slug":"daily-living","title":"Günlük Yaşam ve Öz Bakım","description":"Yaşa uygun günlük rutinlere katılım ve bağımsızlık denemeleri.","sort_order":6},
+  {"slug":"creativity-art","title":"Yaratıcılık ve Sanat","description":"Müzik, ritim, çizim, tasarım ve hayal gücü.","sort_order":7},
+  {"slug":"learning-problem-solving","title":"Öğrenme ve Problem Çözme","description":"Araştırma, soru sorma, deneme ve çözüm yolları.","sort_order":8},
+  {"slug":"social-responsibility","title":"Sosyal Yaşam ve Sorumluluk","description":"Paylaşım, iş birliği, günlük sorumluluklar ve sosyal katılım.","sort_order":9},
+  {"slug":"interests-hobbies","title":"İlgi Alanları ve Hobiler","description":"Zaman içinde gözlemlenen meraklar ve keyif alınan uğraşlar.","sort_order":10}
+]

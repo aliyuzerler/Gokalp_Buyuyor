@@ -1,13 +1,20 @@
-import { useMemo, useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useState } from 'react';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 
 import { Button } from '@/components/button';
-import { DateField, normalizeDateInput } from '@/components/date-field';
+import { DateField } from '@/components/date-field';
 import { Input } from '@/components/input';
 import { makeBirthDateSchema } from '@/domain/birth-date';
-import { setTempProfile } from '@/features/profile/temp-profile-store';
+import { useProfile } from '@/features/profile/use-profile';
 import { tr } from '@/i18n/tr';
 import { colors, spacing, typography } from '@/theme/tokens';
 
@@ -15,32 +22,49 @@ type Step = 'welcome' | 'profile' | 'done';
 
 const DEFAULT_NAME = 'Gökalp';
 
+/**
+ * İlk kurulum akışı. Faz 02'den itibaren profil SQLite'a kalıcı yazılır.
+ */
 export default function OnboardingScreen() {
+  const { saveProfile } = useProfile();
   const [step, setStep] = useState<Step>('welcome');
   const [name, setName] = useState(DEFAULT_NAME);
   const [birthDate, setBirthDate] = useState('');
   const [touched, setTouched] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [birthDateError, setBirthDateError] = useState<string | null>(null);
 
-  const today = useMemo(() => new Date(), []);
-  const birthSchema = useMemo(() => makeBirthDateSchema(today), [today]);
+  const today = new Date();
+  const birthSchema = makeBirthDateSchema(today);
   const birthValidation = birthSchema.safeParse(birthDate);
   const birthError =
-    touched && !birthValidation.success ? birthValidation.error.issues[0]?.message ?? null : null;
+    touched && !birthValidation.success ? (birthValidation.error.issues[0]?.message ?? null) : null;
 
-  const proceedFromProfile = () => {
+  const proceedFromProfile = useCallback(async () => {
     setTouched(true);
-    const nameOk = name.trim().length > 0;
-    if (!birthValidation.success || !nameOk) return;
-    setTempProfile({ displayName: name.trim(), birthDate });
-    setStep('done');
-  };
+    if (!birthValidation.success || name.trim().length === 0) return;
+    setSaving(true);
+    try {
+      await saveProfile({ displayName: name.trim(), birthDate });
+      setStep('done');
+    } catch (error) {
+      // Kullanıcıya Türkçe mesaj; teknik detay yerel logda.
+      const message = error instanceof Error ? error.message : tr.common.errorGeneric;
+      setTouched(true);
+      setBirthDateError(message);
+    } finally {
+      setSaving(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [birthValidation.success, name, saveProfile]);
+
+  const shownBirthError = birthError ?? birthDateError;
 
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
       >
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
           {step === 'welcome' && (
@@ -49,7 +73,11 @@ export default function OnboardingScreen() {
               <Text style={styles.title}>{tr.onboarding.welcomeTitle}</Text>
               <Text style={styles.body}>{tr.onboarding.welcomeBody}</Text>
               <View style={styles.actions}>
-                <Button label={tr.common.next} onPress={() => setStep('profile')} testID="onboarding-welcome-next" />
+                <Button
+                  label={tr.common.next}
+                  onPress={() => setStep('profile')}
+                  testID="onboarding-welcome-next"
+                />
               </View>
             </View>
           )}
@@ -72,14 +100,15 @@ export default function OnboardingScreen() {
                     value={birthDate}
                     onChange={(text) => {
                       setTouched(true);
-                      setBirthDate(normalizeDateInput(text));
+                      setBirthDateError(null);
+                      setBirthDate(text);
                     }}
                     accessibilityLabel={tr.onboarding.profileBirthLabel}
                     testID="onboarding-birth"
                   />
-                  {birthError ? (
+                  {shownBirthError ? (
                     <Text style={styles.error} testID="onboarding-birth-error">
-                      {birthError}
+                      {shownBirthError}
                     </Text>
                   ) : (
                     <Text style={styles.hint}>{tr.onboarding.profileBirthHint}</Text>
@@ -96,8 +125,8 @@ export default function OnboardingScreen() {
                 />
                 <Button
                   label={tr.common.next}
-                  onPress={proceedFromProfile}
-                  disabled={!birthValidation.success || name.trim().length === 0}
+                  onPress={() => void proceedFromProfile()}
+                  disabled={!birthValidation.success || name.trim().length === 0 || saving}
                   testID="onboarding-profile-next"
                 />
               </View>
