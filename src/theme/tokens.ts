@@ -51,4 +51,33 @@ export const typography = {
   },
 } as const;
 
+/**
+ * Yumuşak yüzey gölgeleri (Android/iOS uyumlu elevation eşdeğeri).
+ */
+export const elevation = {
+  card: {
+    shadowColor: '#3F3932',
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 2,
+  },
+  raised: {
+    shadowColor: '#3F3932',
+    shadowOpacity: 0.12,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: 5 },
+    elevation: 4,
+  },
+} as const;
+
 export const touchTarget = 48;
+
+export const theme = {
+  colors,
+  spacing,
+  radius,
+  typography,
+  elevation,
+  touchTarget,
+} as const;
