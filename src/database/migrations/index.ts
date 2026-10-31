@@ -226,6 +226,13 @@ CREATE TABLE IF NOT EXISTS reminders (
 );
 `,
   },
+  {
+    version: 9,
+    name: 'planned-activity-reminder-link',
+    sql: `
+ALTER TABLE planned_activities ADD COLUMN reminder_id TEXT REFERENCES reminders(id);
+`,
+  },
 ];
 
 export const LATEST_SCHEMA_VERSION = MIGRATIONS[MIGRATIONS.length - 1].version;

@@ -1,19 +1,29 @@
 import type { DatabaseDriver } from '../types';
 import { SettingsRepository } from '../repositories/settings-repository';
 import { generateUuid } from '../../utils/uuid';
-import { DEVELOPMENT_AREAS_SEED, GUIDE_CATEGORIES_SEED, SEED_VERSIONS, SKILLS_SEED, SKILLS_SOURCE } from './index';
+import {
+  ACTIVITIES_SEED,
+  DEVELOPMENT_AREAS_SEED,
+  GUIDE_CATEGORIES_SEED,
+  SEED_VERSIONS,
+  SKILLS_SEED,
+  SKILLS_SOURCE,
+} from './index';
 
 const SETTING_DEVELOPMENT_AREAS = 'seed:development_areas:version';
 const SETTING_GUIDE_CATEGORIES = 'seed:guide_categories:version';
 const SETTING_SKILLS = 'seed:skills:version';
+const SETTING_ACTIVITIES = 'seed:activities:version';
 
 export type SeedReport = {
   developmentAreasUpserted: number;
   guideCategoriesUpserted: number;
   skillsUpserted: number;
+  activitiesUpserted: number;
   developmentAreasRan: boolean;
   guideCategoriesRan: boolean;
   skillsRan: boolean;
+  activitiesRan: boolean;
 };
 
 /**
@@ -26,9 +36,11 @@ export async function runSeeds(db: DatabaseDriver): Promise<SeedReport> {
     developmentAreasUpserted: 0,
     guideCategoriesUpserted: 0,
     skillsUpserted: 0,
+    activitiesUpserted: 0,
     developmentAreasRan: false,
     guideCategoriesRan: false,
     skillsRan: false,
+    activitiesRan: false,
   };
 
   const areasVersion = await settings.get(SETTING_DEVELOPMENT_AREAS);
@@ -115,6 +127,62 @@ export async function runSeeds(db: DatabaseDriver): Promise<SeedReport> {
     }
     await settings.set(SETTING_SKILLS, SEED_VERSIONS.skills);
     report.skillsRan = true;
+  }
+
+  const activitiesVersion = await settings.get(SETTING_ACTIVITIES);
+  if (activitiesVersion !== SEED_VERSIONS.activities) {
+    for (const activity of ACTIVITIES_SEED) {
+      await db.runAsync(
+        `INSERT INTO guide_activities (
+           id, category_id, slug, title, summary, purpose, min_age_months, max_age_months,
+           estimated_minutes, materials_json, steps_json, safety_notes, adult_supervision,
+           source_name, source_url, reviewed_at, content_version, is_active
+         )
+         SELECT COALESCE((SELECT g.id FROM guide_activities g WHERE g.slug = ?), ?),
+                c.id, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1
+         FROM guide_categories c
+         WHERE c.slug = ?
+         ON CONFLICT(slug) DO UPDATE SET
+           category_id = excluded.category_id,
+           title = excluded.title,
+           summary = excluded.summary,
+           purpose = excluded.purpose,
+           min_age_months = excluded.min_age_months,
+           max_age_months = excluded.max_age_months,
+           estimated_minutes = excluded.estimated_minutes,
+           materials_json = excluded.materials_json,
+           steps_json = excluded.steps_json,
+           safety_notes = excluded.safety_notes,
+           adult_supervision = excluded.adult_supervision,
+           source_name = excluded.source_name,
+           source_url = excluded.source_url,
+           reviewed_at = excluded.reviewed_at,
+           content_version = excluded.content_version`,
+        [
+          activity.slug,
+          generateUuid(),
+          activity.slug,
+          activity.title,
+          activity.summary,
+          activity.purpose,
+          activity.min_age_months,
+          activity.max_age_months,
+          activity.estimated_minutes,
+          JSON.stringify(activity.materials),
+          JSON.stringify(activity.steps),
+          activity.safety_notes,
+          activity.supervision_level,
+          activity.source_name,
+          activity.source_url,
+          activity.reviewed_at,
+          SEED_VERSIONS.activities,
+          activity.category_slug,
+        ],
+      );
+      report.activitiesUpserted += 1;
+    }
+    await settings.set(SETTING_ACTIVITIES, SEED_VERSIONS.activities);
+    report.activitiesRan = true;
   }
 
   return report;

@@ -6,7 +6,7 @@ import * as path from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 
 import { NodeSqliteDriver } from '@/database/drivers/node-driver';
-import { runMigrations } from '@/database/migrations';
+import { LATEST_SCHEMA_VERSION, runMigrations } from '@/database/migrations';
 import { BACKUP_DATABASE_ENTRY, BACKUP_MANIFEST_ENTRY, buildBackupFileName } from '@/services/backup/constants';
 import { buildManifest, validateManifestJson } from '@/services/backup/manifest';
 import { validateBackupPath, validateBackupPaths } from '@/services/backup/path-guard';
@@ -88,7 +88,7 @@ describe('backup manifest', () => {
   it('buildManifest doğru yapı üretir (encrypted:false)', () => {
     const manifest = buildManifest({
       appVersion: '1.0.0',
-      schemaVersion: 8,
+      schemaVersion: LATEST_SCHEMA_VERSION,
       exportedAt: '2026-10-31T12:00:00.000Z',
       files: [{ path: BACKUP_DATABASE_ENTRY, sizeBytes: 100, sha256: 'a'.repeat(64) }],
     });
@@ -101,21 +101,21 @@ describe('backup manifest', () => {
   it('geçerli manifest kabul edilir', () => {
     const manifest = buildManifest({
       appVersion: '1.0.0',
-      schemaVersion: 8,
+      schemaVersion: LATEST_SCHEMA_VERSION,
       files: [],
     });
-    const result = validateManifestJson(manifest, 8);
+    const result = validateManifestJson(manifest, LATEST_SCHEMA_VERSION);
     expect(result.ok).toBe(true);
   });
 
   it('yanlış format reddedilir', () => {
-    const result = validateManifestJson({ ...buildManifest({ appVersion: 'x', schemaVersion: 8, files: [] }), format: 'baska-format' }, 8);
+    const result = validateManifestJson({ ...buildManifest({ appVersion: 'x', schemaVersion: LATEST_SCHEMA_VERSION, files: [] }), format: 'baska-format' }, LATEST_SCHEMA_VERSION);
     expect(result.ok).toBe(false);
   });
 
   it('formatVersion 2 reddedilir', () => {
     const result = validateManifestJson(
-      { ...buildManifest({ appVersion: 'x', schemaVersion: 8, files: [] }), formatVersion: 2 },
+      { ...buildManifest({ appVersion: 'x', schemaVersion: LATEST_SCHEMA_VERSION, files: [] }), formatVersion: 2 },
       8,
     );
     expect(result.ok).toBe(false);
@@ -123,7 +123,7 @@ describe('backup manifest', () => {
 
   it('şifreli işaretli yedek reddedilir', () => {
     const result = validateManifestJson(
-      { ...buildManifest({ appVersion: 'x', schemaVersion: 8, files: [] }), encrypted: true },
+      { ...buildManifest({ appVersion: 'x', schemaVersion: LATEST_SCHEMA_VERSION, files: [] }), encrypted: true },
       8,
     );
     expect(result.ok).toBe(false);
@@ -178,7 +178,7 @@ describe('restore validator (entegrasyon — gerçek SQLite + SHA-256)', () => {
 
     const manifest = buildManifest({
       appVersion: '1.0.0',
-      schemaVersion: 8,
+      schemaVersion: LATEST_SCHEMA_VERSION,
       files: [{ path: BACKUP_DATABASE_ENTRY, sizeBytes: dbBytes.length, sha256: sha256(dbBytes) }],
     });
     writeExtractedTree(root, {
@@ -206,7 +206,7 @@ describe('restore validator (entegrasyon — gerçek SQLite + SHA-256)', () => {
     const { root } = await buildValidExtracted();
     const result = await validateRestoreExtracted({
       extractedRoot: root,
-      currentSchemaVersion: 8,
+      currentSchemaVersion: LATEST_SCHEMA_VERSION,
       io: makeNodeIO(),
     });
     expect(result.ok).toBe(true);
@@ -220,7 +220,7 @@ describe('restore validator (entegrasyon — gerçek SQLite + SHA-256)', () => {
     const dbBytes = fs.readFileSync(dbPath);
     const manifest = buildManifest({
       appVersion: '1.0.0',
-      schemaVersion: 8,
+      schemaVersion: LATEST_SCHEMA_VERSION,
       files: [{ path: BACKUP_DATABASE_ENTRY, sizeBytes: dbBytes.length, sha256: sha256(dbBytes) }],
     });
     writeExtractedTree(root, {
@@ -229,7 +229,7 @@ describe('restore validator (entegrasyon — gerçek SQLite + SHA-256)', () => {
     });
     const result = await validateRestoreExtracted({
       extractedRoot: root,
-      currentSchemaVersion: 8,
+      currentSchemaVersion: LATEST_SCHEMA_VERSION,
       io: makeNodeIO(),
     });
     expect(result.ok).toBe(true);
@@ -241,7 +241,7 @@ describe('restore validator (entegrasyon — gerçek SQLite + SHA-256)', () => {
     fs.writeFileSync(path.join(root, BACKUP_DATABASE_ENTRY), Buffer.from('x'));
     const result = await validateRestoreExtracted({
       extractedRoot: root,
-      currentSchemaVersion: 8,
+      currentSchemaVersion: LATEST_SCHEMA_VERSION,
       io: makeNodeIO(),
     });
     expect(result).toMatchObject({ ok: false, stage: 'manifest' });
@@ -256,7 +256,7 @@ describe('restore validator (entegrasyon — gerçek SQLite + SHA-256)', () => {
     fs.writeFileSync(dbPath, bytes);
     const result = await validateRestoreExtracted({
       extractedRoot: root,
-      currentSchemaVersion: 8,
+      currentSchemaVersion: LATEST_SCHEMA_VERSION,
       io: makeNodeIO(),
     });
     expect(result).toMatchObject({ ok: false, stage: 'hash' });
@@ -268,7 +268,7 @@ describe('restore validator (entegrasyon — gerçek SQLite + SHA-256)', () => {
     fs.appendFileSync(path.join(root, BACKUP_DATABASE_ENTRY), Buffer.from('x'));
     const result = await validateRestoreExtracted({
       extractedRoot: root,
-      currentSchemaVersion: 8,
+      currentSchemaVersion: LATEST_SCHEMA_VERSION,
       io: makeNodeIO(),
     });
     expect(result).toMatchObject({ ok: false, stage: 'hash' });
@@ -279,7 +279,7 @@ describe('restore validator (entegrasyon — gerçek SQLite + SHA-256)', () => {
     fs.writeFileSync(path.join(root, 'evil.txt'), 'surprise');
     const result = await validateRestoreExtracted({
       extractedRoot: root,
-      currentSchemaVersion: 8,
+      currentSchemaVersion: LATEST_SCHEMA_VERSION,
       io: makeNodeIO(),
     });
     expect(result).toMatchObject({ ok: false, stage: 'paths' });
@@ -289,13 +289,13 @@ describe('restore validator (entegrasyon — gerçek SQLite + SHA-256)', () => {
     const root = path.join(tmp, 'traversal');
     const manifest = buildManifest({
       appVersion: '1.0.0',
-      schemaVersion: 8,
+      schemaVersion: LATEST_SCHEMA_VERSION,
       files: [{ path: '../outside.txt', sizeBytes: 1, sha256: 'a'.repeat(64) }],
     });
     writeExtractedTree(root, { [BACKUP_MANIFEST_ENTRY]: JSON.stringify(manifest) });
     const result = await validateRestoreExtracted({
       extractedRoot: root,
-      currentSchemaVersion: 8,
+      currentSchemaVersion: LATEST_SCHEMA_VERSION,
       io: makeNodeIO(),
     });
     expect(result).toMatchObject({ ok: false, stage: 'paths' });
@@ -306,7 +306,7 @@ describe('restore validator (entegrasyon — gerçek SQLite + SHA-256)', () => {
     const corruptBytes = Buffer.from('BU BİR SQLITE DOSYASI DEĞİL, AMA HASHİ DOĞRU' .repeat(4));
     const manifest = buildManifest({
       appVersion: '1.0.0',
-      schemaVersion: 8,
+      schemaVersion: LATEST_SCHEMA_VERSION,
       files: [{ path: BACKUP_DATABASE_ENTRY, sizeBytes: corruptBytes.length, sha256: sha256(corruptBytes) }],
     });
     writeExtractedTree(root, {
@@ -315,7 +315,7 @@ describe('restore validator (entegrasyon — gerçek SQLite + SHA-256)', () => {
     });
     const result = await validateRestoreExtracted({
       extractedRoot: root,
-      currentSchemaVersion: 8,
+      currentSchemaVersion: LATEST_SCHEMA_VERSION,
       io: makeNodeIO(),
     });
     expect(result).toMatchObject({ ok: false, stage: 'database' });
@@ -332,13 +332,13 @@ describe('restore validator (entegrasyon — gerçek SQLite + SHA-256)', () => {
     const dbBytes = fs.readFileSync(dbPath);
     const manifest = buildManifest({
       appVersion: '1.0.0',
-      schemaVersion: 8,
+      schemaVersion: LATEST_SCHEMA_VERSION,
       files: [{ path: BACKUP_DATABASE_ENTRY, sizeBytes: dbBytes.length, sha256: sha256(dbBytes) }],
     });
     fs.writeFileSync(path.join(root, BACKUP_MANIFEST_ENTRY), JSON.stringify(manifest));
     const result = await validateRestoreExtracted({
       extractedRoot: root,
-      currentSchemaVersion: 8,
+      currentSchemaVersion: LATEST_SCHEMA_VERSION,
       io: makeNodeIO(),
     });
     expect(result).toMatchObject({ ok: false, stage: 'database' });

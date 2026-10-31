@@ -1,6 +1,189 @@
 {
   "content_version": "1.0.0",
   "language": "tr-TR",
-  "activities": [],
-  "note": "Bu dosyaya yalnızca güvenilir kaynağı, yaş aralığı ve güvenlik notları doğrulanmış etkinlik eklenmelidir. Örnek olsun diye kaynaksız gelişim/sağlık önerisi uydurmayın. Alan yapısı docs/CONTENT_GUIDELINES.md içinde tanımlıdır."
+  "activities": [
+    {
+      "slug": "tummy-time-play",
+      "category_slug": "sensory-play",
+      "area_slug": "motor",
+      "title": "Karnında oyun zamanı",
+      "summary": "Uyanıkken gözetiminizde kısa yüzüstü oyunlarıyla boyun ve gövde kasları güçlenir.",
+      "purpose": "Baş kontrolü ve gövde gücünü desteklemek; çocukla yüz yüze oyun kurmak.",
+      "min_age_months": 0,
+      "max_age_months": 8,
+      "estimated_minutes": 5,
+      "materials": ["Temiz, yumuşak bir zemin veya oyuncak batığı"],
+      "steps": [
+        "Zemine yumuşak bir örtü serin.",
+        "Çocuğu uyanıkken hafifçe yüzüstü yatırın.",
+        "Onunla aynı seviyeye inip konuşun, oyuncak gösterin.",
+        "İlk seanslarda 1-2 dakika ile başlayıp yavaşça uzatın.",
+        "Çocuk rahatsız olursa araya ara verin."
+      ],
+      "safety_notes": "Yalnızca uyanıkken ve gözetiminiz altında. Uyku pozisyonu değildir; bebek asla yüzüstü uyutulmaz. Beslenmeden hemen sonra denemeyin.",
+      "supervision_level": "required",
+      "source_name": "CDC Learn the Signs. Act Early. — bebek aktivite ipuçları",
+      "source_url": "https://www.cdc.gov/ncbddd/actearly/milestones/index.html",
+      "reviewed_at": "2026-10-31"
+    },
+    {
+      "slug": "reach-and-grasp-game",
+      "category_slug": "play-exploration",
+      "area_slug": "motor",
+      "title": "Uzan ve tut oyunu",
+      "summary": "Kolun erişebileceği mesafeye konan güvenli oyuncaklar uzanma ve kavrama denemelerini destekler.",
+      "purpose": "Göz-el koordinasyonu ve kas kontrolünü desteklemek.",
+      "min_age_months": 2,
+      "max_age_months": 10,
+      "estimated_minutes": 10,
+      "materials": ["Yutulmayacak boyutta güvenli çıngırak/oyuncak"],
+      "steps": [
+        "Çocuğu sırtüstü veya destekle oturur konuma getirin.",
+        "Oyuncağı kol mesafesinde tutup sallayarak dikkatini çekin.",
+        "Tutamadığında oyuncakları hafifçe yaklaştırın.",
+        "Tutunca 'tuttun!' gibi kısa olumlu sözler söyleyin."
+      ],
+      "safety_notes": "Yutulabilecek küçük parçalardan uzak tutun (boğulma riski). Oyuncağı çocuğun yüzüne doğru sıkıştırmayın.",
+      "supervision_level": "required",
+      "source_name": "Zero to Three — bebek oyun fikirleri",
+      "source_url": "https://www.zerotothree.org/resource/play-activities-for-birth-to-12-months",
+      "reviewed_at": "2026-10-31"
+    },
+    {
+      "slug": "sound-and-name-game",
+      "category_slug": "language-talk",
+      "area_slug": "language-communication",
+      "title": "Sesler ve ad oyunu",
+      "summary": "Tanıdık sesler, konuşma ve adına tepki oyunları iletişim gelişimini destekler.",
+      "purpose": "Ses ayrımı, dikkat ve isim farkındalığını desteklemek.",
+      "min_age_months": 3,
+      "max_age_months": 12,
+      "estimated_minutes": 5,
+      "materials": [],
+      "steps": [
+        "Çocuğunuzun yanına oturun, kısa cümlelerle konuşun.",
+        "Basit sesler çıkarıp beklemede kalın; sesler tekrarlamaya çalışabilir.",
+        "Adını farklı tonlarda söylediğinizde dönüp dönmediğini gözlemleyin.",
+        "Gözlemlediğinizi günlük kısa notla kaydedin."
+      ],
+      "safety_notes": "Gürültü seviyesini yumuşak tutun; ani yüksek seslerden kaçının.",
+      "supervision_level": "required",
+      "source_name": "CDC Learn the Signs. Act Early. — 6/9 ay ipuçları",
+      "source_url": "https://www.cdc.gov/ncbddd/actearly/milestones/index.html",
+      "reviewed_at": "2026-10-31"
+    },
+    {
+      "slug": "peek-a-boo",
+      "category_slug": "play-exploration",
+      "area_slug": "social-emotional",
+      "title": "Saklambaç (ceee oyunu)",
+      "summary": "Yüzü kapatıp açmak sosyal bağ, dikkat ve kalıcı nesne kavramını destekler.",
+      "purpose": "Karşılıklı dikkat ve sürpriz-tahmin oyunu yoluyla bağ kurma.",
+      "min_age_months": 4,
+      "max_age_months": 18,
+      "estimated_minutes": 5,
+      "materials": ["İnce bir örtü veya elleriniz"],
+      "steps": [
+        "Yüzünüzü ellerinizle kapatın.",
+        "Açarken neşeli biçimde 'ceee' deyin.",
+        "Sıra çocuğa gelirse bezin altındaki oyuncağı bulmasını isteyin."
+      ],
+      "safety_notes": "Örtüyü çocuğun yüzünde tutmayın; oyunu her zaman siz yönetin.",
+      "supervision_level": "required",
+      "source_name": "Zero to Three — bebek oyun fikirleri",
+      "source_url": "https://www.zerotothree.org/resource/play-activities-for-birth-to-12-months",
+      "reviewed_at": "2026-10-31"
+    },
+    {
+      "slug": "container-play",
+      "category_slug": "play-exploration",
+      "area_slug": "cognitive-exploration",
+      "title": "Kapa koy çıkar oyunu",
+      "summary": "Büyük bir kap ve güvenli nesnelerle koyup çıkarma oyunu keşfi destekler.",
+      "purpose": "Nesne kalıcılığı, sebep-sonuç ve ince motor deneyim.",
+      "min_age_months": 9,
+      "max_age_months": 24,
+      "estimated_minutes": 10,
+      "materials": ["Geniş ağızlı plastik kap", "Yutulmayacak boyutta top/blok oyuncaklar"],
+      "steps": [
+        "Kabı önüne koyun, bir topu içine bırakın.",
+        "Topu çıkarıp tekrar koyması için davet edin.",
+        "Çıkardığında 'çıktı!' gibi kısa sözlerle eşlik edin."
+      ],
+      "safety_notes": "Nesneler boru çapından büyük olsun (boğulma riski). Gözetim zorunludur.",
+      "supervision_level": "required",
+      "source_name": "Zero to Three — bebek oyun fikirleri",
+      "source_url": "https://www.zerotothree.org/resource/play-activities-for-birth-to-12-months",
+      "reviewed_at": "2026-10-31"
+    },
+    {
+      "slug": "book-time",
+      "category_slug": "language-talk",
+      "area_slug": "language-communication",
+      "title": "Kitap bakma ritüeli",
+      "summary": "Resimli kitaba birlikte bakmak dil, dikkat ve bağ kurmayı besler.",
+      "purpose": "Kelime dağarcığı, ortak dikkat ve rutin keyfi.",
+      "min_age_months": 6,
+      "max_age_months": 36,
+      "estimated_minutes": 10,
+      "materials": ["Sağlam, bebek dostu resimli kitap"],
+      "steps": [
+        "Rahat bir yerde çocuğunize kucağınıza alın.",
+        "Resimleri gösterip kısa cümlelerle adlandırın.",
+        "Çocuk işaret ederse söylediğini onaylayıp genişletin: 'Evet, top!'",
+        "Her gün kısa süreli ama düzenli yapın."
+      ],
+      "safety_notes": "Yırtılabilir sayfalı kitaplarda gözetim gerekir.",
+      "supervision_level": "required",
+      "source_name": "Zero to Three — bebek oyun fikirleri",
+      "source_url": "https://www.zerotothree.org/resource/play-activities-for-birth-to-12-months",
+      "reviewed_at": "2026-10-31"
+    },
+    {
+      "slug": "music-and-motion",
+      "category_slug": "creative-arts",
+      "area_slug": "creativity-art",
+      "title": "Müzik ve hareket",
+      "summary": "Yumuşak şarkılar eşliğinde sallanma, ritim tutma ve dans keyfi.",
+      "purpose": "Dinleme, ritim duygusu ve ortak neşe.",
+      "min_age_months": 6,
+      "max_age_months": 36,
+      "estimated_minutes": 10,
+      "materials": ["Yumuşak müzik", "Kolay marakas (isteğe bağlı)"],
+      "steps": [
+        "Sakin bir şarkı açın.",
+        "Çocuğunuzu kucağınızda ritme uygun sallayın.",
+        "Elinizde marakas varsa ritmi birlikte tutun.",
+        "Çocuk bir ses çıkardığında onu tekrar edin."
+      ],
+      "safety_notes": "Ses seviyesini düşük tutun; kucağınızda hızlı dönme hareketi yapmayın.",
+      "supervision_level": "required",
+      "source_name": "Zero to Three — bebek oyun fikirleri",
+      "source_url": "https://www.zerotothree.org/resource/play-activities-for-birth-to-12-months",
+      "reviewed_at": "2026-10-31"
+    },
+    {
+      "slug": "spoon-practice",
+      "category_slug": "daily-routines",
+      "area_slug": "daily-living",
+      "title": "Kaşık pratiği",
+      "summary": "Yemek zamanında kendi kaşığıyla denemesine fırsat vermek öz bakım denemelerini destekler.",
+      "purpose": "El-ağız koordinasyonu ve bağımsızlık denemesi.",
+      "min_age_months": 12,
+      "max_age_months": 30,
+      "estimated_minutes": 15,
+      "materials": ["Yumuşak uçlu bebek kaşığı", "Kolay tutulan yemek"],
+      "steps": [
+        "Koltuk altına örtü serpin.",
+        "İki kaşık kullanın: biri sizde, biri çocuğunda.",
+        "Kaşığını doldurup tutmasına yardım edin, sonra bırakın.",
+        "Dökülmeleri sürecin doğal parçası olarak görün."
+      ],
+      "safety_notes": "Boğulma riski olan sert/yuvarlak yiyeceklerden kaçının; yemek sırasında asla yalnız bırakmayın.",
+      "supervision_level": "required",
+      "source_name": "CDC Learn the Signs. Act Early. — 12/18 ay ipuçları",
+      "source_url": "https://www.cdc.gov/ncbddd/actearly/milestones/index.html",
+      "reviewed_at": "2026-10-31"
+    }
+  ]
 }

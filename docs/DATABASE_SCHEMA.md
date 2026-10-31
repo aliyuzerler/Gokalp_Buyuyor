@@ -208,3 +208,7 @@ CREATE TABLE IF NOT EXISTS schema_migrations (
 - Her repository parametreli SQL kullanır; string interpolation ile SQL birleştirme yok.
 - Migration rollback stratejisi ve veri koruma planı her migration için yazılır.
 - İçerik seed verisi uygulama kodundan ayrı JSON dosyalarında tutulur.
+
+## 4. Şema değişiklikleri (migration geçmişi)
+
+- v9: `planned_activities` tablosuna `reminder_id TEXT REFERENCES reminders(id)` eklendi (Faz 6 — planlı etkinlik hatırlatma bağlantısı).
