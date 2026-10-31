@@ -90,11 +90,11 @@ describe('migration runner (entegrasyon)', () => {
     await runMigrations(db);
     await runSeeds(db);
 
-    const skill = await db.getFirstAsync<{ id: string }>('SELECT id FROM skills LIMIT 1');
-    // Faz 5'te beceri seed'i gelecek; şimdilik areas tablosu üzerinden doğrula.
+    // Faz 5'ten itibaren beceri seed'i de çalışır (kaynaklı içerik).
+    const skills = await db.getAllAsync<{ slug: string }>('SELECT slug FROM skills');
+    expect(skills.length).toBeGreaterThanOrEqual(30);
     const areas = await db.getAllAsync<{ slug: string }>('SELECT slug FROM development_areas');
     expect(areas).toHaveLength(10);
-    expect(skill).toBeNull(); // beceri seed'i henüz yok
 
     await expect(
       db.runAsync(
