@@ -1,82 +1,98 @@
-# Gökalp Büyüyor — ZCode Başlangıç Paketi
+# Gökalp Büyüyor
 
-**Ürün:** Gökalp Büyüyor  
-**Sürüm:** 1.1  
-**Platform:** Android + iOS  
-**Mimari:** Local-first / offline-first  
-**Dil:** Türkçe (ilk sürüm)  
-**Hedef kullanım:** 0–18 yaş
+Gökalp'in 0–18 yaş arasındaki anılarını, günlük gözlemlerini, gelişim becerilerini, ilgi alanlarını ve birlikte yapılan etkinlikleri yerel olarak kaydedip arşivleyen kişisel mobil uygulamadır.
 
-Bu paket, ZCode ile uygulamayı kontrollü ve faz faz geliştirmek için hazırlanmıştır. Önce proje klasörüne çıkarın, sonra `AGENTS.md` ve `prompts/START_HERE.md` dosyalarını ZCode'a verin.
+- **Platform:** Android + iOS (React Native + Expo + TypeScript)
+- **Mimari:** Local-first / offline-first — sunucu, hesap, bulut, reklam, analitik yoktur
+- **Depolama:** Uygulama özel alanında standart SQLite + medya dosyaları
+- **Yedek:** Kullanıcı tarafından başlatılan şifresiz ZIP (`.gokalpbackup`), harici diske manuel kopyalanır
+- **Ürün dili:** Türkçe
 
-## Ürün kararları
+> Bu uygulama gelişim teşhisi koymaz, puanlama yapmaz ve çocukları karşılaştırmaz.
+> Ürün kararları için `AGENTS.md`, `PROJECT_CONTEXT.md` ve `docs/PRD.md` tek doğruluk kaynağıdır.
 
-- Veriler yalnızca telefonun uygulamaya özel yerel alanında saklanır.
-- Sunucu, kullanıcı hesabı, bulut senkronizasyonu, Firebase, Supabase, reklam ve analitik yoktur.
-- SQLite kullanılır; **SQLCipher kullanılmaz**.
-- Fotoğraf ve videolar uygulamanın özel medya klasörüne kopyalanır; dosya düzeyinde ekstra şifreleme yoktur.
-- PIN, biyometrik kilit ve özel şifreleme katmanı ilk sürüm kapsamı dışındadır.
-- Kullanıcı uygulama içinden manuel yedek oluşturur. Yedek normal, şifresiz ZIP dosyasıdır; kullanıcı bunu USB/Files üzerinden harici diske kopyalar.
-- Uygulama temel işlevleri internet olmadan çalışır.
-- Uygulama çocuk gelişimi teşhisi koymaz, gelişimi puanlamaz ve çocukları karşılaştırmaz.
+## Geliştirme ortamı gereksinimleri
 
-## Teknoloji önerisi
+- Node.js 20+ (geliştirme 24.x ile yapıldı)
+- npm 10+ (geliştirme 11.x ile yapıldı)
+- Expo CLI (proje ile birlikte gelir, `npx expo` ile çalışır)
+- Android derlemesi: JDK 17/21 + Android SDK (`expo prebuild` + Gradle)
+- iOS derlemesi: macOS + Xcode (yalnızca macOS ortamında)
 
-- React Native + Expo (development build / prebuild gerektiğinde) + TypeScript
-- Expo Router
-- `expo-sqlite` (standart SQLite, migration katmanı)
-- `expo-file-system` (özel medya ve yedek staging alanı)
-- `expo-image-picker` ve/veya `expo-camera`
-- `expo-notifications` (yerel bildirimler)
-- Zustand veya React Context (yalnızca geçici UI state; kalıcı veri SQLite)
-- Zod (girdi ve içe aktarma doğrulaması)
-- Jest + React Native Testing Library + mümkünse Maestro/Detox E2E
+## Kurulum
 
-Paket sürümlerini kurulum anında birbiriyle uyumlu Expo SDK sürümüne göre seçin. Rastgele `latest` sürümleri bir araya getirmeyin. Expo Go, native gereksinimlerde nihai doğrulama ortamı değildir; development build kullanın.
-
-## Başlangıç
-
-1. Bu ZIP'i yeni ve boş bir proje klasörüne çıkarın.
-2. `AGENTS.md` dosyasını ZCode proje bağlamına ekleyin.
-3. `prompts/START_HERE.md` içindeki başlangıç promptunu ZCode'a gönderin.
-4. ZCode'un önce repo ve geliştirme ortamını incelemesini, sonra yalnızca Faz 0'ı yapmasını isteyin.
-5. Fazları sırayla uygulayın. Her fazdan sonra ilgili `TEST_PROMPT.md` dosyasını çalıştırmadan sonraki faza geçmeyin.
-6. Mimari kararı değiştirmek gerekiyorsa `docs/DECISIONS.md` dosyasına gerekçesiyle kaydedin.
-
-## Paket yapısı
-
-```text
-AGENTS.md
-README.md
-PROJECT_CONTEXT.md
-docs/
-  PRD.md
-  ARCHITECTURE.md
-  DATABASE_SCHEMA.md
-  UI_UX.md
-  BACKUP_RESTORE.md
-  CONTENT_GUIDELINES.md
-  TEST_STRATEGY.md
-  DECISIONS.md
-  phases/00...09/
-skills/
-  product-definition/SKILL.md
-  expo-local-first/SKILL.md
-  manual-backup/SKILL.md
-  child-development-content/SKILL.md
-prompts/
-  START_HERE.md
-  PHASE_EXECUTION_TEMPLATE.md
-templates/
-  seed-development-areas.json
-  seed-activities.json
-  app-config.example.json
-examples/
-  backup-manifest.example.json
+```bash
+npm install
 ```
 
-## Önemli kapsam sınırları
+Bağımlılık sürümleri Expo SDK ile uyumlu tutulmalıdır. Yeni paket eklerken:
 
-İlk sürümde yalnızca tek çocuk profili (Gökalp) desteklenir; veri modeli ileride genişlemeye uygun tasarlanır. Çoklu ebeveyn, ortak düzenleme, çevrimiçi hesap, AI servisi ve otomatik bulut yedeklemesi yoktur.
+```bash
+npx expo install <paket>
+```
 
-Bu paket kodun kendisi değil, ZCode için ürün/tasarım/uygulama/test talimatlarıdır. ZCode'un ürettiği kodu gerçek Android ve iOS cihazlarda test edin.
+## Çalıştırma
+
+```bash
+# Metro dev server + Expo Go / development build
+npm start
+
+# Android cihaz/emülatör
+npm run android
+
+# iOS simülatör (yalnızca macOS)
+npm run ios
+
+# Web önizleme (hızlı UI incelemesi için; SQLite/medya/bildirimler yalnızca native)
+npm run web
+```
+
+Native modül gerektiren özellikler (SQLite, dosya sistemi, bildirim, kamera/medya, ZIP) Expo Go yerine **development build** ile doğrulanmalıdır:
+
+```bash
+npx expo prebuild -p android      # android/ klasörünü üretir (CNG)
+npx expo run:android              # cihaza/emülatöre derleyip kurar
+```
+
+## Kalite komutları
+
+```bash
+npm run typecheck   # tsc --noEmit (strict)
+npm run lint        # eslint (expo config)
+npm run format      # prettier
+npm run test        # jest (birim + entegrasyon + bileşen)
+npm run doctor      # expo-doctor
+```
+
+## Proje yapısı
+
+```text
+app/                Expo Router ekranları ((tabs) + alt akışlar)
+src/
+  components/       Ortak UI bileşenleri
+  theme/            Tasarım token'ları (docs/UI_UX.md)
+  i18n/             Merkezi Türkçe metin kaynağı
+  features/         Modül bazlı hook / use-case / view-model
+  database/         DB bağlantısı, migration, repository, seed
+  domain/           Saf iş mantığı (yaş hesabı, doğrulama)
+  services/         Backup, medya, bildirim servisleri
+  hooks/            Ortak React hook'ları
+  utils/            Yardımcılar
+docs/               PRD, mimari, şema, faz planı ve faz raporları
+skills/ prompts/    Geliştirme disiplin dosyaları
+templates/ examples/ Seed ve örnek JSON'lar
+```
+
+## Faz planı
+
+Fazlar `docs/PHASES_OVERVIEW.md` içinde tanımlıdır (00–09). Her fazın
+`docs/phases/NN/IMPLEMENTATION_PROMPT.md` ve `TEST_PROMPT.md` dosyaları vardır;
+her faz sonunda `docs/phases/NN/PHASE_REPORT.md` yazılır.
+
+## Yedekleme notu
+
+Yedek dosyası (`Gokalp_Buyuyor_YYYY-MM-DD_HH-mm.gokalpbackup`) **şifrelenmez**
+ve fotoğraf/video/kişisel notlar içerebilir. Uygulama dışa aktarmadan önce bu
+uyarıyı gösterir; dosyayı güvenli bir yerde (ör. harici disk) saklamak
+kullanıcının sorumluluğudur. Repoya kişisel veri/medya girilmez (`.
+gitignore` kapsamındadır).
