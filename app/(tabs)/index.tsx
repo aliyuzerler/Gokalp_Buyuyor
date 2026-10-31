@@ -1,5 +1,6 @@
+import { useCallback } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 
 import { Button } from '@/components/button';
 import { Card } from '@/components/card';
@@ -8,6 +9,7 @@ import { SectionHeader } from '@/components/section-header';
 import { ScreenContainer } from '@/components/screen-container';
 import { useProfile } from '@/features/profile/use-profile';
 import { useJournal } from '@/features/journal/use-journal';
+import { usePlannedActivities } from '@/features/guide/use-guide';
 import {
   JOURNAL_ENTRY_TYPE_LABELS,
   type JournalEntryType,
@@ -16,9 +18,21 @@ import { tr } from '@/i18n/tr';
 import { colors, spacing, typography } from '@/theme/tokens';
 
 export default function HomeScreen() {
-  const { profile, loading, ageLabel } = useProfile();
-  const { entries } = useJournal();
+  const { profile, loading, ageLabel, reload: reloadProfile } = useProfile();
+  const { entries, load: loadEntries } = useJournal();
+  const { items: planned, loading: plannedLoading } = usePlannedActivities();
   const recent = entries.slice(0, 3);
+  const upcoming = planned
+    .filter((item) => item.status === 'planned')
+    .slice(0, 2);
+
+  // Sekmeye her dönüşte taze veri (Faz 4 akışı: son kayıtlar güncel kalsın).
+  useFocusEffect(
+    useCallback(() => {
+      void reloadProfile();
+      void loadEntries(0);
+    }, [reloadProfile, loadEntries]),
+  );
 
   if (loading) {
     return (
@@ -84,8 +98,7 @@ export default function HomeScreen() {
         <QuickAction
           label={tr.home.quickPhoto}
           icon="camera-outline"
-          disabled
-          onPress={() => undefined}
+          onPress={() => router.push('/media')}
           testID="home-quick-photo"
         />
       </View>
@@ -113,9 +126,45 @@ export default function HomeScreen() {
         </View>
       )}
 
-      <SectionHeader title={tr.tabs.home} subtitle={tr.home.placeholder} />
+      {!plannedLoading && upcoming.length > 0 && (
+        <>
+          <View style={styles.sectionRow}>
+            <View style={styles.sectionGrow}>
+              <SectionHeader title={tr.home.plannedSection} />
+            </View>
+            <Button
+              label={tr.home.plannedSeeAll}
+              variant="ghost"
+              onPress={() => router.push('/activities/planned')}
+              testID="home-planned-see-all"
+            />
+          </View>
+          <View style={styles.recentList}>
+            {upcoming.map((item) => (
+              <Card key={item.id}>
+                <Text style={styles.recentType}>
+                  {item.planned_for ?? '—'}
+                </Text>
+                <Text style={styles.recentTitle}>
+                  {item.activity_title ?? item.custom_title ?? 'Etkinlik'}
+                </Text>
+              </Card>
+            ))}
+          </View>
+        </>
+      )}
+
+      <SectionHeader title={tr.home.suggestSection} />
       <Card>
-        <Text style={styles.hint}>{tr.home.placeholderHint}</Text>
+        <Text style={styles.hint}>{tr.home.suggestHint}</Text>
+        <View style={styles.suggestAction}>
+          <Button
+            label={tr.home.suggestCta}
+            variant="secondary"
+            onPress={() => router.push('/guide')}
+            testID="home-open-guide"
+          />
+        </View>
       </Card>
     </ScreenContainer>
   );
@@ -140,7 +189,7 @@ function QuickAction({
       variant="secondary"
       onPress={onPress}
       disabled={disabled}
-      accessibilityLabel={disabled ? `${label} (${tr.home.quickPhotoLater})` : label}
+      accessibilityLabel={disabled ? `${label} (${tr.home.quickPhotoHint})` : label}
       testID={testID}
     />
   );
@@ -190,5 +239,16 @@ const styles = StyleSheet.create({
     ...typography.small,
     color: colors.textMuted,
     marginTop: 2,
+  },
+  sectionRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    gap: spacing.sm,
+  },
+  sectionGrow: {
+    flex: 1,
+  },
+  suggestAction: {
+    marginTop: spacing.sm,
   },
 });

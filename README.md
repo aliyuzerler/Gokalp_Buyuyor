@@ -89,6 +89,27 @@ Fazlar `docs/PHASES_OVERVIEW.md` içinde tanımlıdır (00–09). Her fazın
 `docs/phases/NN/IMPLEMENTATION_PROMPT.md` ve `TEST_PROMPT.md` dosyaları vardır;
 her faz sonunda `docs/phases/NN/PHASE_REPORT.md` yazılır.
 
+## Sürüm 1.0.0 — Android APK
+
+`apk/Gokalp_Buyuyor-v1.0.0-release.apk` (64,8 MB)
+
+- Paket: `com.gokalp.buyuyor` · versionCode 1 · versionName 1.0.0
+- ABI: `arm64-v8a` + `armeabi-v7a` (modern tüm Android telefonlar)
+- minSdk 24 (Android 7.0) · targetSdk 36 · compileSdk 37 · Hermes etkin
+- İmza: geliştirme (debug) anahtarı — kişisel kullanım içindir; mağaza için ayrı keystore gerekir
+- Kurulum: APK'yı telefona kopyalayıp dosya yöneticisinden açın ("Bilinmeyen kaynaklara izin ver")
+
+Derleme, bu depodaki kaynaklardan `expo prebuild` + `gradlew assembleRelease`
+ile yapılmıştır; ekran görüntüleri `docs/screenshots/` klasöründedir.
+
+## Ekran görüntüleri
+
+`docs/screenshots/` klasöründe uygulamanın tüm ana akışlarından 19 adet
+görüntü bulunur: onboarding (2), ana sayfa, kayıt oluşturma, günlük listesi,
+kayıt detayı, gelişim alanları (2), beceri detayı + gözlem geçmişi (2),
+rehber + etkinlik detayı + planlama (3), arşiv/zaman çizelgesi, ilgi alanları,
+hatırlatmalar, medya arşivi, yedekleme ve çocuk profili.
+
 ## Yedekleme notu
 
 Yedek dosyası (`Gokalp_Buyuyor_YYYY-MM-DD_HH-mm.gokalpbackup`) **şifrelenmez**

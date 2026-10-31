@@ -44,8 +44,18 @@ export function useProfile() {
     [repository],
   );
 
+  // Sekmeye geri dönüldüğünde taze veri için odak yenilemesi.
+  const reload = useCallback(async () => {
+    try {
+      const row = await repository.getPrimary();
+      setProfile(row);
+    } catch {
+      // Profil okunamazsa mevcut durum korunur.
+    }
+  }, [repository]);
+
   const age = profile ? calculateAge(profile.birth_date) : null;
   const ageLabel = age ? formatAgeTr(age) : null;
 
-  return { profile, loading, saveProfile, age, ageLabel };
+  return { profile, loading, saveProfile, reload, age, ageLabel };
 }

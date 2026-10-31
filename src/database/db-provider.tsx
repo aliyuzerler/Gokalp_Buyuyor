@@ -83,6 +83,21 @@ export function DatabaseProvider({ children }: PropsWithChildren) {
     };
   }, [open]);
 
+  // Web'de sekme/sayfa kapanışında OPFS kilitlerini serbest bırak.
+  // Mobilde doğal yaşam döngüsü zaten bağlantıyı yönetir.
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    const release = () => {
+      const current = dbRef.current;
+      if (current && current.isOpen()) {
+        current.closeAsync().catch(() => undefined);
+        dbRef.current = null;
+      }
+    };
+    window.addEventListener('pagehide', release);
+    return () => window.removeEventListener('pagehide', release);
+  }, []);
+
   const withDbClosed = useCallback(
     async <T,>(task: () => Promise<T>): Promise<T> => {
       const current = dbRef.current;

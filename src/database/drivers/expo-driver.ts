@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+
 import type { SQLiteDatabase } from 'expo-sqlite';
 
 import type { DatabaseDriver, SqlParams, SqlRunResult } from '../types';
@@ -33,6 +35,12 @@ export class ExpoDatabaseDriver implements DatabaseDriver {
 
   async withTransactionAsync<T>(task: () => Promise<T>): Promise<T> {
     let result: T;
+    // Web (WA-SQLite/OPFS) sürümü withExclusiveTransactionAsync'i desteklemez;
+    // mobil davranış aynen korunur, web'de işlem söz öbek içinde yürütülür.
+    if (Platform.OS === 'web') {
+      result = await task();
+      return result;
+    }
     await this.db.withExclusiveTransactionAsync(async () => {
       result = await task();
     });

@@ -27,9 +27,6 @@ export const tr = {
   },
   home: {
     agePrefix: 'bugün',
-    placeholder: 'Ana sayfa hazırlanıyor.',
-    placeholderHint:
-      'Bu ekranda hızlı not, anı, fotoğraf ekleme ve son kayıtlar yer alacak.',
     setupCta: 'Kurulumu başlat',
     greeting: 'bugün neler var?',
     setupPendingTitle: 'Önce Gökalp için profil oluşturalım',
@@ -40,9 +37,14 @@ export const tr = {
     quickMemory: 'Anı',
     quickObservation: 'Gözlem',
     quickPhoto: 'Fotoğraf',
-    quickPhotoLater: 'Fotoğraf ekleme Faz 7\'de',
+    quickPhotoHint: 'Medya arşivine gider',
     recentSection: 'Son kayıtlar',
     recentEmpty: 'Henüz kayıt yok. Bugün bir şey kaydetmek ister misin?',
+    plannedSection: 'Planlanan etkinlikler',
+    plannedSeeAll: 'Tümünü gör',
+    suggestSection: 'Birlikte deneyebilirsiniz',
+    suggestHint: 'Yaşına uygun etkinlik fikirleri rehberde sizi bekliyor.',
+    suggestCta: "Rehber'e göz at",
   },
   onboarding: {
     welcomeTitle: "Gökalp'in büyüme günlüğüne hoş geldiniz",
