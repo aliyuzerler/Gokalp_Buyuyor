@@ -46,3 +46,15 @@ Yeni mimari karar, mevcut ADR'ye gerekçesiz ters düşemez. Değişiklik gereki
 **Karar:** Repository'ler `DatabaseDriver` arayüzüne bağımlıdır; uygulama `ExpoDatabaseDriver` (expo-sqlite), testler `NodeSqliteDriver` (node:sqlite) kullanır.
 **Gerekçe:** expo-sqlite Node ortamında çalışmaz; aynı SQL/migration'ın gerçek SQLite üzerinde entegrasyon testi gerekliliği (TEST_STRATEGY.md).
 **Sonuç:** Migration ve CRUD testleri production SQL'iyle birebir koşar. Sürücü farkları (parametre bağlama, transaction) iki adaptörde ortak davranışa sabitlenmiştir.
+
+## ADR-009: Yedek dışa aktarma akışı (SAF + paylaşım sayfası)
+
+**Karar:** Android'de SAF klasör izni + native `copyAsync` ile dosya content-uri'ye kopyalanır; iOS'ta `expo-sharing` paylaşım sayfası kullanılır.
+**Gerekçe:** Dosya JS belleğine yüklenmeden native kopya gerekir (büyük medya). SAF create-document akışı izin iptalinde güvenli çıkış sağlar; iOS'ta Files'a kaydetme paylaşım sayfasından yapılır.
+**Sonuç:** Kullanıcı hedef konumu seçmeden uygulama başarı mesajı üretmez. İptal algılama iOS'ta mümkün olmadığından UI "kaydedildi" iddiasında bulunmaz; yalnızca "yedek hazır + paylaşım sayfasını kullanın" bilgisi gösterilir.
+
+## ADR-010: DB tutarlı snapshot stratejisi
+
+**Karar:** Yedek alımı için DB bağlantısı `withDbClosed` köprüsüyle düzgün kapatılır, dosya kopyalanır, bağlantı migration + seed kontrollü olarak yeniden açılır.
+**Gerekçe:** expo-sqlite SDK 58'de SQLite online backup API'si sunmuyor; kit yalnızca ana dosyayı WAL açıkken kopyalamayı kabul etmiyor. Tek kullanıcılı üründe kısa kapanma penceresi kabul edilebilir.
+**Sonuç:** Snapshot her zaman WAL-checkpoint'lenmiş tutarlı durumdadır; restore eski şemalı DB getirirse açılışta migration uygulanır.

@@ -27,6 +27,18 @@ export default function ArchiveScreen() {
           </View>
           <Text style={styles.chevron}>›</Text>
         </Pressable>
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => router.push('/settings/backup')}
+          style={styles.row}
+          testID="archive-open-backup"
+        >
+          <View style={styles.rowText}>
+            <Text style={styles.rowTitle}>{tr.backup.title}</Text>
+            <Text style={styles.rowDesc}>{tr.backup.createDesc}</Text>
+          </View>
+          <Text style={styles.chevron}>›</Text>
+        </Pressable>
       </Card>
     </ScreenContainer>
   );

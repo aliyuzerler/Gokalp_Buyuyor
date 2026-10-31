@@ -69,6 +69,27 @@ export const tr = {
     settingsOpenProfile: 'Çocuk profili',
     settingsOpenProfileDesc: 'Ad, doğum tarihi ve profil fotoğrafı',
   },
+  backup: {
+    title: 'Yedekleme ve Geri Yükleme',
+    warning:
+      'Bu yedek şifrelenmez. Fotoğraflar, videolar ve kişisel notlar içerir. Dosyayı güvenli bir yerde (örn. harici disk) saklayın.',
+    createButton: 'Yedek oluştur',
+    createDesc: 'Veritabanı + medya tek ZIP dosyası olarak hazırlanır ve paylaşılır.',
+    restoreButton: 'Yedekten geri yükle',
+    restoreDesc: 'Mevcut veriler yedekteki verilerle değiştirilir. Birleştirme yapılmaz.',
+    creating: 'Yedek hazırlanıyor…',
+    picking: 'Yedek dosyası bekleniyor…',
+    restoringConfirmTitle: 'Mevcut veriler değiştirilecek',
+    restoringConfirmBody:
+      'Geri yükleme mevcut veritabanını ve medyayı yedektekiyle değiştirir. Bu işlem geri alınamaz. Devam edilsin mi?',
+    confirm: 'Evet, geri yükle',
+    createdReady: (name: string, sizeBytes: number) =>
+      `Yedek hazır: ${name} (${(sizeBytes / 1024 / 1024).toFixed(1)} MB). Kaydetmek için paylaşım sayfasını kullanın.`,
+    restored: (count: number) => `Geri yükleme tamamlandı (${count} dosya doğrulandı).`,
+    wrongExtension: 'Lütfen .gokalpbackup uzantılı bir yedek dosyası seçin.',
+    androidNote: 'Android: Dosyayı cihaz belleğine veya Drive’a kaydedebilir, sonra harici diske kopyalayabilirsiniz.',
+    iosNote: 'iOS: Paylaşım sayfasından “Files”a kaydet’i seçip daha sonra bilgisayara kopyalayabilirsiniz.',
+  },
   settings: {
     profileTitle: 'Çocuk profili',
     profileNameLabel: 'Ad',

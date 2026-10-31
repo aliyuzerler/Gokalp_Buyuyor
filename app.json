@@ -68,7 +68,8 @@
           "supportsPictureInPicture": false
         }
       ],
-      "react-native-zip-archive"
+      "react-native-zip-archive",
+      "expo-sharing"
     ],
     "experiments": {}
   }
