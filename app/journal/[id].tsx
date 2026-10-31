@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
@@ -10,6 +10,8 @@ import { ScreenHeader } from '@/components/screen-header';
 import { useReadyDb } from '@/database/db-provider';
 import { JournalRepository, type JournalEntryWithTags } from '@/database/repositories/journal-repository';
 import { DevelopmentAreasRepository } from '@/database/repositories/development-areas-repository';
+import { useJournalMedia } from '@/features/media/use-media';
+import { mediaAbsoluteUri } from '@/services/media/media-service';
 import { JOURNAL_ENTRY_TYPE_LABELS, type JournalEntryType } from '@/domain/journal-types';
 import { tr } from '@/i18n/tr';
 import { colors, radius, spacing, typography } from '@/theme/tokens';
@@ -27,6 +29,7 @@ export default function JournalDetailScreen() {
   const [entry, setEntry] = useState<JournalEntryWithTags | null>(null);
   const [loading, setLoading] = useState(true);
   const [areaTitle, setAreaTitle] = useState<string | null>(null);
+  const media = useJournalMedia(id || null);
 
   useEffect(() => {
     let active = true;
@@ -82,7 +85,17 @@ export default function JournalDetailScreen() {
         text: tr.common.delete,
         style: 'destructive',
         onPress: () => {
-          void repository.remove(id).then(() => router.back());
+          void (async () => {
+            const { MediaRepository } = await import('@/database/repositories/media-repository');
+            const { MediaService } = await import('@/services/media/media-service');
+            const mediaRepo = new MediaRepository(db);
+            const mediaSvc = new MediaService(db);
+            const linked = await mediaRepo.forJournal(id);
+            await mediaSvc.cleanupJournalMedia(id);
+            await repository.remove(id);
+            await mediaSvc.removeAssetsIfUnlinked(linked.map((m) => m.id));
+            router.back();
+          })();
         },
       },
     ]);
@@ -139,7 +152,52 @@ export default function JournalDetailScreen() {
           <Text style={styles.created}>{entry.created_at}</Text>
         </Card>
 
-        <Text style={styles.mediaNote}>{tr.journal.mediaNote}</Text>
+        <View style={styles.mediaSection}>
+          <Text style={styles.sectionTitle}>{tr.journal.mediaSection}</Text>
+          <View style={styles.mediaRow}>
+            {media.assets.map((m) => (
+              <View key={m.id} style={styles.mediaThumb}>
+                {m.media_type === 'image' ? (
+                  <Image
+                    source={{ uri: mediaAbsoluteUri(m.thumbnail_relative_path ?? m.relative_path) }}
+                    style={styles.mediaImage}
+                    accessibilityLabel={m.original_name ?? 'Fotoğraf'}
+                  />
+                ) : m.thumbnail_relative_path ? (
+                  <Image
+                    source={{ uri: mediaAbsoluteUri(m.thumbnail_relative_path) }}
+                    style={styles.mediaImage}
+                    accessibilityLabel={m.original_name ?? 'Video'}
+                  />
+                ) : (
+                  <View style={[styles.mediaImage, styles.videoPlaceholder]}>
+                    <Ionicons name="videocam" size={24} color={colors.textMuted} />
+                  </View>
+                )}
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={tr.journal.mediaRemove}
+                  onPress={() => void media.remove(m.id)}
+                  style={styles.mediaRemove}
+                  testID={`media-remove-${m.id}`}
+                >
+                  <Ionicons name="close-circle" size={20} color={colors.danger} />
+                </Pressable>
+              </View>
+            ))}
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => void media.addFromLibrary()}
+              disabled={media.busy}
+              style={[styles.mediaThumb, styles.mediaAdd]}
+              testID="media-add"
+            >
+              <Ionicons name={media.busy ? 'hourglass-outline' : 'add-circle-outline'} size={28} color={colors.primaryDark} />
+              <Text style={styles.mediaAddText}>{media.busy ? tr.media.importing : tr.journal.mediaAdd}</Text>
+            </Pressable>
+          </View>
+          {media.error ? <Text style={styles.mediaError}>{media.error}</Text> : null}
+        </View>
 
         <View style={styles.actions}>
           <Button
@@ -218,10 +276,57 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     marginTop: spacing.lg,
   },
-  mediaNote: {
-    ...typography.small,
-    color: colors.textMuted,
+  mediaSection: {
     marginTop: spacing.md,
+  },
+  mediaRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+    marginTop: spacing.sm,
+  },
+  mediaThumb: {
+    width: 96,
+    height: 96,
+    borderRadius: radius.md,
+    overflow: 'hidden',
+    backgroundColor: colors.surfaceMuted,
+  },
+  mediaImage: {
+    width: '100%',
+    height: '100%',
+  },
+  videoPlaceholder: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mediaAdd: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderStyle: 'dashed',
+  },
+  mediaAddText: {
+    ...typography.small,
+    color: colors.primaryDark,
+    marginTop: spacing.xs,
+    textAlign: 'center',
+  },
+  mediaRemove: {
+    position: 'absolute',
+    top: 2,
+    right: 2,
+  },
+  mediaError: {
+    ...typography.small,
+    color: colors.danger,
+    marginTop: spacing.xs,
+  },
+  sectionTitle: {
+    ...typography.body,
+    color: colors.text,
+    fontWeight: '600',
   },
   actions: {
     marginTop: spacing.lg,

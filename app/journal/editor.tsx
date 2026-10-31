@@ -219,7 +219,7 @@ export default function JournalEditorScreen() {
             </View>
           ) : null}
 
-          <Text style={styles.hint}>{tr.journal.mediaNote}</Text>
+          <Text style={styles.hint}>{tr.journal.occurredHint}</Text>
 
           {error ? <Text style={styles.error}>{error}</Text> : null}
 

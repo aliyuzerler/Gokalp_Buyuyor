@@ -90,7 +90,9 @@ export const tr = {
     deleteConfirmBody: 'Bu kayıt ve etiket ilişkileri silinecek. Bu işlem geri alınamaz.',
     deleted: 'Kayıt silindi.',
     saved: 'Kayıt kaydedildi.',
-    mediaNote: 'Fotoğraf/video ekleme Faz 7\'de (medya arşivi) gelecek.',
+    mediaSection: 'Medya',
+    mediaAdd: 'Fotoğraf/video ekle',
+    mediaRemove: 'Çıkar',
   },
   development: {
     placeholder: 'Gelişim alanları ve beceri gözlemleri burada olacak.',
@@ -167,6 +169,8 @@ export const tr = {
     settingsSection: 'Profil ve Ayarlar',
     settingsOpenProfile: 'Çocuk profili',
     settingsOpenProfileDesc: 'Ad, doğum tarihi ve profil fotoğrafı',
+    openMedia: 'Medya arşivi',
+    openMediaDesc: 'Fotoğraf ve videolar',
   },
   backup: {
     title: 'Yedekleme ve Geri Yükleme',
@@ -188,6 +192,16 @@ export const tr = {
     wrongExtension: 'Lütfen .gokalpbackup uzantılı bir yedek dosyası seçin.',
     androidNote: 'Android: Dosyayı cihaz belleğine veya Drive’a kaydedebilir, sonra harici diske kopyalayabilirsiniz.',
     iosNote: 'iOS: Paylaşım sayfasından “Files”a kaydet’i seçip daha sonra bilgisayara kopyalayabilirsiniz.',
+  },
+  media: {
+    title: 'Medya arşivi',
+    empty: 'Henüz fotoğraf veya video yok. Günlük kayıtlarından veya buradan ekleyebilirsin.',
+    addButton: 'Medya ekle',
+    deleteConfirmTitle: 'Medya silinsin mi?',
+    deleteConfirmBody: 'Dosya uygulamanın özel alanından da silinecek. Bu işlem geri alınamaz.',
+    sizeNote: (mb: number) => `Dosya sınırı: ${mb} MB. Medya yalnızca bu telefonda saklanır.`,
+    videoPlaceholder: 'Video önizleme yok',
+    importing: 'Medya kopyalanıyor…',
   },
   settings: {
     profileTitle: 'Çocuk profili',

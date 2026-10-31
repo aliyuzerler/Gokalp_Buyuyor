@@ -38,6 +38,18 @@ export default function ArchiveScreen() {
         </Pressable>
         <Pressable
           accessibilityRole="button"
+          onPress={() => router.push('/media')}
+          style={styles.row}
+          testID="archive-open-media"
+        >
+          <View style={styles.rowText}>
+            <Text style={styles.rowTitle}>{tr.archive.openMedia}</Text>
+            <Text style={styles.rowDesc}>{tr.archive.openMediaDesc}</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
+        </Pressable>
+        <Pressable
+          accessibilityRole="button"
           onPress={() => router.push('/settings/backup')}
           style={styles.row}
           testID="archive-open-backup"
