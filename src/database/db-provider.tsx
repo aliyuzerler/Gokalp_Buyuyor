@@ -3,6 +3,8 @@ import type { PropsWithChildren } from 'react';
 
 import { openAppDatabase } from './db';
 import type { DatabaseDriver } from './types';
+import { rescheduleRemindersOnStart } from '@/services/notifications/reminder-sync';
+import { Platform } from 'react-native';
 
 type DbStatus = 'loading' | 'ready' | 'error';
 
@@ -61,6 +63,11 @@ export function DatabaseProvider({ children }: PropsWithChildren) {
     open()
       .then((db) => {
         if (!cancelled) setValue({ status: 'ready', db, error: null });
+        // Açılışta hatırlatma yeniden planlama doğrulaması (Faz 8).
+        // İzin yoksa hata üretmez; yalnızca yerel log.
+        if (Platform.OS !== 'web') {
+          rescheduleRemindersOnStart(db).catch(() => undefined);
+        }
       })
       .catch((error: unknown) => {
         if (!cancelled) {
