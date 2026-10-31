@@ -1,0 +1,16 @@
+{
+  "appName": "Gökalp Büyüyor",
+  "appSlug": "gokalp-buyuyor",
+  "scheme": "gokalpbuyuyor",
+  "bundleIdentifier": "com.gokalp.buyuyor",
+  "androidPackage": "com.gokalp.buyuyor",
+  "defaultLocale": "tr-TR",
+  "defaultTimezone": "Europe/Istanbul",
+  "offlineFirst": true,
+  "backendEnabled": false,
+  "cloudSyncEnabled": false,
+  "analyticsEnabled": false,
+  "adsEnabled": false,
+  "encryptedBackupEnabled": false,
+  "sqlCipherEnabled": false
+}
